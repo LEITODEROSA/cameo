@@ -13,6 +13,7 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --font-sans: var(--font-geist-sans);
+  --font-editorial: var(--font-editorial);
 }
 
 body {
@@ -21,8 +22,40 @@ body {
   font-family: var(--font-sans), Helvetica, Arial, sans-serif;
 }
 
+.font-editorial {
+  font-family: var(--font-editorial), "Times New Roman", serif;
+}
+
 .tracking-widest-plus {
   letter-spacing: 0.28em;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[marquee_28s_linear_infinite\] {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .editorial-block {
