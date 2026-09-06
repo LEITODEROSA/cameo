@@ -23,6 +23,7 @@ export interface ApifyPostItem {
   commentsCount?: number;
   videoViewCount?: number;
   type?: string; // "Image" | "Video" | "Sidecar"
+  productType?: string; // "feed" | "clips" (reel) | "igtv"
 }
 
 const MISSING_KEY = (name: string) =>
@@ -30,34 +31,97 @@ const MISSING_KEY = (name: string) =>
     `Falta configurar ${name}. Agregala en .env.local (ver .env.local.example) y reiniciá el servidor.`
   );
 
-/**
- * Corre un actor de Apify (por defecto pensado para un scraper de posteos
- * públicos de Instagram, ej. "apify/instagram-scraper") y devuelve el
- * dataset resultante directamente, usando el endpoint run-sync-get-dataset-items
- * de Apify (no requiere hacer polling).
- */
-export async function runApifyInstagramScraper(instagramUrl: string): Promise<ApifyPostItem[]> {
+async function runApifyActor<T>(actorId: string, input: Record<string, unknown>): Promise<T[]> {
   const token = process.env.APIFY_TOKEN;
-  const actorId = process.env.APIFY_IG_ACTOR_ID || "apify~instagram-scraper";
   if (!token) throw MISSING_KEY("APIFY_TOKEN");
 
   const endpoint = `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${token}`;
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      directUrls: [instagramUrl],
-      resultsType: "posts",
-      resultsLimit: 20,
-    }),
+    body: JSON.stringify(input),
   });
 
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`Apify respondió ${res.status}: ${body.slice(0, 300)}`);
+    throw new Error(`Apify (${actorId}) respondió ${res.status}: ${body.slice(0, 300)}`);
   }
 
-  return (await res.json()) as ApifyPostItem[];
+  return (await res.json()) as T[];
+}
+
+/**
+ * Corre un actor de Apify (por defecto "apify/instagram-scraper") y devuelve
+ * el dataset resultante directamente, usando el endpoint
+ * run-sync-get-dataset-items de Apify (no requiere hacer polling).
+ *
+ * resultsType "posts" trae feed + reels públicos de la cuenta. Las
+ * historias (contenido efímero de 24hs) quedan afuera a propósito: verlas
+ * de una cuenta ajena requiere loguearse como si fueras esa cuenta, algo
+ * que ya no es "leer contenido público" y cruza los Términos de Servicio de
+ * Instagram — por eso las historias de competidores se siguen cargando a
+ * mano en el dashboard.
+ */
+export async function runApifyInstagramScraper(instagramUrl: string): Promise<ApifyPostItem[]> {
+  const actorId = process.env.APIFY_IG_ACTOR_ID || "apify~instagram-scraper";
+  return runApifyActor<ApifyPostItem>(actorId, {
+    directUrls: [instagramUrl],
+    resultsType: "posts",
+    resultsLimit: 20,
+  });
+}
+
+export interface ApifyTikTokItem {
+  webVideoUrl?: string;
+  videoUrl?: string; // link directo al mp4, según el actor
+  text?: string; // caption
+  createTimeISO?: string;
+  diggCount?: number; // likes
+  commentCount?: number;
+  shareCount?: number;
+  playCount?: number; // views
+}
+
+/**
+ * Corre un scraper de TikTok (por defecto "clockworks/tiktok-scraper") sobre
+ * el perfil público de una marca.
+ */
+export async function runApifyTikTokScraper(profileUrl: string): Promise<ApifyTikTokItem[]> {
+  const actorId = process.env.APIFY_TIKTOK_ACTOR_ID || "clockworks~tiktok-scraper";
+  return runApifyActor<ApifyTikTokItem>(actorId, {
+    profiles: [profileUrl],
+    resultsPerPage: 20,
+    shouldDownloadVideos: false,
+  });
+}
+
+export interface ApifyAdLibraryItem {
+  adArchiveId?: string;
+  pageName?: string;
+  snapshot?: {
+    body?: { text?: string };
+    videos?: { video_hd_url?: string; video_sd_url?: string }[];
+    images?: { original_image_url?: string }[];
+  };
+  startDate?: string;
+  isActive?: boolean;
+  publisherPlatform?: string[]; // ["facebook", "instagram"]
+}
+
+/**
+ * Corre un scraper de la Meta Ad Library (por defecto
+ * "apify/facebook-ads-scraper") para ver qué anuncios tiene activos una
+ * página. Es la misma data pública que se ve entrando a la Ad Library a
+ * mano — esto solo la trae ordenada y con descarga de creativo.
+ */
+export async function runApifyAdLibraryScraper(pageNameOrUrl: string): Promise<ApifyAdLibraryItem[]> {
+  const actorId = process.env.APIFY_ADLIBRARY_ACTOR_ID || "apify~facebook-ads-scraper";
+  return runApifyActor<ApifyAdLibraryItem>(actorId, {
+    searchTerms: [pageNameOrUrl],
+    countryCode: "AR",
+    activeStatus: "active",
+    resultsLimit: 20,
+  });
 }
 
 export interface SupadataTranscriptResult {
@@ -127,3 +191,10 @@ export function integrationsStatus() {
     windsor: Boolean(process.env.WINDSOR_API_KEY),
   };
 }
+
+/** Ajustá esto si tu cuenta de Apify usa otro actor para alguna de las tres tareas. */
+export const APIFY_DEFAULT_ACTORS = {
+  instagram: "apify/instagram-scraper",
+  tiktok: "clockworks/tiktok-scraper",
+  adLibrary: "apify/facebook-ads-scraper",
+};

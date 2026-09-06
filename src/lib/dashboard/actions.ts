@@ -7,7 +7,9 @@ import { downloadMedia } from "./media";
 import {
   fetchSupadataTranscript,
   fetchWindsorAdsReport,
+  runApifyAdLibraryScraper,
   runApifyInstagramScraper,
+  runApifyTikTokScraper,
 } from "./integrations";
 import type {
   AdNetwork,
@@ -175,11 +177,12 @@ export async function syncBrandFromApify(formData: FormData): Promise<SyncResult
 
       const id = randomUUID();
       const isVideo = item.type === "Video" && Boolean(item.videoUrl);
+      const isReel = item.productType === "clips" || (isVideo && !item.productType);
       const entry: ContentEntry = {
         id,
         brandId,
         platform: "Instagram",
-        format: isVideo ? "Reel" : "Post",
+        format: isReel ? "Reel" : isVideo ? "Video" : "Post",
         aestheticTags: [],
         url: item.url,
         publishedAt: item.timestamp ? item.timestamp.slice(0, 10) : new Date().toISOString().slice(0, 10),
@@ -216,6 +219,148 @@ export async function syncBrandFromApify(formData: FormData): Promise<SyncResult
     revalidatePath(`/dashboard/marcas/${brandId}`);
 
     return { ok: true, message: `Se sincronizaron ${added} piezas nuevas de ${brand.name}.` };
+  } catch (err) {
+    return { ok: false, message: err instanceof Error ? err.message : "Error desconocido." };
+  }
+}
+
+/** Trae los últimos videos públicos de TikTok de una marca vía Apify. */
+export async function syncBrandTikTokFromApify(formData: FormData): Promise<SyncResult> {
+  const brandId = String(formData.get("brandId") ?? "");
+  const data = await readData();
+  const brand = data.brands.find((b) => b.id === brandId);
+  if (!brand) return { ok: false, message: "Marca no encontrada." };
+  if (!brand.tiktokHandle) {
+    return { ok: false, message: "Esta marca no tiene @ de TikTok cargado." };
+  }
+
+  const tiktokUrl = `https://www.tiktok.com/@${brand.tiktokHandle.replace("@", "")}`;
+
+  try {
+    const items = await runApifyTikTokScraper(tiktokUrl);
+    const existingUrls = new Set(data.content.map((c) => c.url).filter(Boolean));
+    let added = 0;
+
+    for (const item of items) {
+      const url = item.webVideoUrl;
+      if (!url || existingUrls.has(url)) continue;
+
+      const id = randomUUID();
+      const entry: ContentEntry = {
+        id,
+        brandId,
+        platform: "TikTok",
+        format: "Video",
+        aestheticTags: [],
+        url,
+        publishedAt: item.createTimeISO ? item.createTimeISO.slice(0, 10) : new Date().toISOString().slice(0, 10),
+        caption: item.text,
+        metrics: {
+          likes: item.diggCount,
+          comments: item.commentCount,
+          shares: item.shareCount,
+          views: item.playCount,
+        },
+        isAd: false,
+        source: "Apify",
+        createdAt: new Date().toISOString(),
+      };
+
+      if (item.videoUrl) {
+        try {
+          const { mediaPath, mediaType } = await downloadMedia(item.videoUrl, brandId, id);
+          entry.mediaPath = mediaPath;
+          entry.mediaType = mediaType;
+        } catch {
+          // seguimos sin media si la descarga falla
+        }
+      }
+
+      data.content.push(entry);
+      added += 1;
+    }
+
+    await writeData(data);
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/contenido");
+    revalidatePath("/dashboard/tendencias");
+    revalidatePath(`/dashboard/marcas/${brandId}`);
+
+    return { ok: true, message: `Se sincronizaron ${added} videos de TikTok de ${brand.name}.` };
+  } catch (err) {
+    return { ok: false, message: err instanceof Error ? err.message : "Error desconocido." };
+  }
+}
+
+/**
+ * Trae los anuncios activos/inactivos de una marca desde la Meta Ad Library
+ * (misma data pública que se ve entrando a la Ad Library a mano) y los
+ * guarda como piezas de tipo Anuncio, descargando el creativo.
+ */
+export async function syncBrandAdsFromApify(formData: FormData): Promise<SyncResult> {
+  const brandId = String(formData.get("brandId") ?? "");
+  const data = await readData();
+  const brand = data.brands.find((b) => b.id === brandId);
+  if (!brand) return { ok: false, message: "Marca no encontrada." };
+
+  const query = brand.instagramHandle?.replace("@", "") || brand.name;
+
+  try {
+    const items = await runApifyAdLibraryScraper(query);
+    const existingIds = new Set(
+      data.content.filter((c) => c.brandId === brandId && c.isAd).map((c) => c.url).filter(Boolean)
+    );
+    let added = 0;
+
+    for (const item of items) {
+      const adUrl = item.adArchiveId
+        ? `https://www.facebook.com/ads/library/?id=${item.adArchiveId}`
+        : undefined;
+      if (!adUrl || existingIds.has(adUrl)) continue;
+
+      const id = randomUUID();
+      const video = item.snapshot?.videos?.[0];
+      const image = item.snapshot?.images?.[0];
+      const isVideo = Boolean(video);
+
+      const entry: ContentEntry = {
+        id,
+        brandId,
+        platform: item.publisherPlatform?.includes("instagram") ? "Instagram" : "Facebook",
+        format: "Anuncio",
+        aestheticTags: [],
+        url: adUrl,
+        publishedAt: item.startDate ? item.startDate.slice(0, 10) : new Date().toISOString().slice(0, 10),
+        caption: item.snapshot?.body?.text,
+        metrics: {},
+        isAd: true,
+        adNetwork: "Meta (Facebook/Instagram)",
+        adStatus: item.isActive ? "Activo" : "Pausado o finalizado",
+        source: "Apify",
+        createdAt: new Date().toISOString(),
+      };
+
+      const mediaUrl = isVideo ? video?.video_hd_url ?? video?.video_sd_url : image?.original_image_url;
+      if (mediaUrl) {
+        try {
+          const { mediaPath, mediaType } = await downloadMedia(mediaUrl, brandId, id);
+          entry.mediaPath = mediaPath;
+          entry.mediaType = mediaType;
+        } catch {
+          // seguimos sin media si la descarga falla
+        }
+      }
+
+      data.content.push(entry);
+      added += 1;
+    }
+
+    await writeData(data);
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/anuncios");
+    revalidatePath(`/dashboard/marcas/${brandId}`);
+
+    return { ok: true, message: `Se sincronizaron ${added} anuncios de ${brand.name}.` };
   } catch (err) {
     return { ok: false, message: err instanceof Error ? err.message : "Error desconocido." };
   }

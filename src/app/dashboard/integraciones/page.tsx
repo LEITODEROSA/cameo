@@ -1,6 +1,11 @@
 import { readData } from "@/lib/dashboard/store";
 import { integrationsStatus } from "@/lib/dashboard/integrations";
-import { syncBrandFromApify, syncOwnAdsFromWindsor } from "@/lib/dashboard/actions";
+import {
+  syncBrandAdsFromApify,
+  syncBrandFromApify,
+  syncBrandTikTokFromApify,
+  syncOwnAdsFromWindsor,
+} from "@/lib/dashboard/actions";
 import { SyncForm } from "./SyncForm";
 
 export default async function IntegracionesPage() {
@@ -28,15 +33,62 @@ export default async function IntegracionesPage() {
           Términos de Servicio de Instagram, así que las historias se siguen cargando a mano.
         </p>
         <StatusBadge ok={status.apify} envVar="APIFY_TOKEN (y opcional APIFY_IG_ACTOR_ID)" />
+        <div className="mt-4 grid gap-6 sm:grid-cols-2">
+          <div>
+            <p className="mb-2 text-xs font-medium uppercase text-neutral-500">Posts + Reels (Instagram)</p>
+            <SyncForm action={syncBrandFromApify} submitLabel="Sincronizar posteos">
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="text-xs text-neutral-400">Marca</span>
+                <select name="brandId" required className="input">
+                  {competitors.length === 0 && <option value="">Agregá marcas primero</option>}
+                  {competitors.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name} {b.instagramHandle ? `(${b.instagramHandle})` : "(sin @ cargado)"}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </SyncForm>
+          </div>
+
+          <div>
+            <p className="mb-2 text-xs font-medium uppercase text-neutral-500">TikTok</p>
+            <SyncForm action={syncBrandTikTokFromApify} submitLabel="Sincronizar TikTok">
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="text-xs text-neutral-400">Marca</span>
+                <select name="brandId" required className="input">
+                  {competitors.length === 0 && <option value="">Agregá marcas primero</option>}
+                  {competitors.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name} {b.tiktokHandle ? `(${b.tiktokHandle})` : "(sin @ de TikTok cargado)"}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </SyncForm>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-300">
+          Meta Ad Library (vía Apify)
+        </h2>
+        <p className="mt-2 text-sm text-neutral-400">
+          Trae los anuncios que una marca tiene (o tuvo) activos en Facebook/Instagram — la misma data
+          pública de la Ad Library, pero ordenada y con el creativo (imagen o video) descargado a tu
+          dashboard.
+        </p>
+        <StatusBadge ok={status.apify} envVar="APIFY_TOKEN (y opcional APIFY_ADLIBRARY_ACTOR_ID)" />
         <div className="mt-4 max-w-sm">
-          <SyncForm action={syncBrandFromApify} submitLabel="Sincronizar posteos">
+          <SyncForm action={syncBrandAdsFromApify} submitLabel="Sincronizar anuncios">
             <label className="flex flex-col gap-1 text-sm">
               <span className="text-xs text-neutral-400">Marca</span>
               <select name="brandId" required className="input">
                 {competitors.length === 0 && <option value="">Agregá marcas primero</option>}
                 {competitors.map((b) => (
                   <option key={b.id} value={b.id}>
-                    {b.name} {b.instagramHandle ? `(${b.instagramHandle})` : "(sin @ cargado)"}
+                    {b.name}
                   </option>
                 ))}
               </select>
