@@ -1,0 +1,15 @@
+{
+  "brands": [
+    {
+      "id": "mi-marca",
+      "name": "Mi Marca",
+      "segment": "Mujer",
+      "country": "Argentina",
+      "instagramHandle": "@mi.marca",
+      "isOwn": true,
+      "notes": "Completá esta ficha en Mi Marca con tu info real.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    }
+  ],
+  "content": []
+}
