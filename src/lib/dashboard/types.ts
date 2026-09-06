@@ -8,6 +8,10 @@ export type AdStatus = "Activo" | "Pausado o finalizado" | "Sin verificar";
 
 export type Segment = "Mujer" | "Hombre" | "Unisex" | "Niños";
 
+export type ContentSource = "Manual" | "Apify" | "Supadata" | "Windsor.ai";
+
+export type MediaType = "image" | "video";
+
 export interface Brand {
   id: string;
   name: string;
@@ -26,6 +30,10 @@ export interface ContentMetrics {
   shares?: number;
   saves?: number;
   views?: number;
+  // Métricas de pauta paga (propia), típicamente sincronizadas vía Windsor.ai
+  spend?: number;
+  impressions?: number;
+  clicks?: number;
 }
 
 export interface ContentEntry {
@@ -41,6 +49,14 @@ export interface ContentEntry {
   isAd: boolean;
   adNetwork?: AdNetwork;
   adStatus?: AdStatus;
+  /** Ruta local (dentro de /public) de la captura o video descargado */
+  mediaPath?: string;
+  mediaType?: MediaType;
+  /** Guion / transcripción del video (manual o vía Supadata) */
+  script?: string;
+  /** Por qué funcionó o no funcionó esta pieza, para aprender de la competencia */
+  analysis?: string;
+  source: ContentSource;
   createdAt: string;
 }
 

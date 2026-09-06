@@ -2,12 +2,102 @@
   "brands": [
     {
       "id": "mi-marca",
-      "name": "Mi Marca",
+      "name": "Cameo",
       "segment": "Mujer",
       "country": "Argentina",
-      "instagramHandle": "@mi.marca",
+      "instagramHandle": "@cameo",
       "isOwn": true,
-      "notes": "Completá esta ficha en Mi Marca con tu info real.",
+      "notes": "Indumentaria femenina, Flores (CABA). Venta minorista y mayorista. Objetivo: subir el nivel de producción de contenido a premium. Completá/corregí el @ real de Instagram acá.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "nude-project",
+      "name": "Nude Project",
+      "segment": "Unisex",
+      "country": "España",
+      "notes": "Referente de estética/dirección de arte a nivel internacional. Confirmá el @ exacto.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "m-studios",
+      "name": "M Studios",
+      "segment": "Mujer",
+      "country": "Argentina",
+      "notes": "Referente de estética premium local. Confirmá el @ exacto (puede ser \"Eme Studios\").",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "aritzia",
+      "name": "Aritzia",
+      "segment": "Mujer",
+      "country": "Canadá",
+      "instagramHandle": "@aritzia",
+      "notes": "Referente internacional de escala/producción, no compite en precio directo.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "top-white",
+      "name": "Top White",
+      "segment": "Mujer",
+      "country": "Argentina",
+      "notes": "Competidor directo AR. Confirmá el @ exacto.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "sisters-and-seekers",
+      "name": "Sisters and Seekers",
+      "segment": "Mujer",
+      "country": "Argentina",
+      "notes": "Competidor directo AR / referente de estética. Confirmá el @ exacto.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "two-hip",
+      "name": "Two Hip",
+      "segment": "Mujer",
+      "country": "Argentina",
+      "notes": "Competidor directo AR. Confirmá el @ y la escritura exacta del nombre.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "my-saint",
+      "name": "My Saint",
+      "segment": "Mujer",
+      "country": "Argentina",
+      "notes": "Competidor directo AR. Confirmá el @ y la escritura exacta del nombre.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "freres",
+      "name": "Freres",
+      "segment": "Unisex",
+      "country": "Argentina",
+      "notes": "Competidor directo AR. Confirmá el @ y la escritura exacta del nombre.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "47-street",
+      "name": "47 Street",
+      "segment": "Mujer",
+      "country": "Argentina",
+      "notes": "Competidor directo AR de escala grande. Confirmá el @ exacto.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "kosiuko",
+      "name": "Kosiuko",
+      "segment": "Mujer",
+      "country": "Argentina",
+      "notes": "Competidor directo AR de escala grande. Confirmá el @ exacto.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "zara",
+      "name": "Zara",
+      "segment": "Mujer",
+      "country": "España",
+      "instagramHandle": "@zara",
+      "notes": "Referente internacional de escala/producción, no compite en precio directo.",
       "createdAt": "2026-09-06T00:00:00.000Z"
     }
   ],

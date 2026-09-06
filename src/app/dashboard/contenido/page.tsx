@@ -68,6 +68,9 @@ export default async function ContenidoPage({
           <Field label="Caption / descripción">
             <input name="caption" className="input" placeholder="De qué trata la pieza" />
           </Field>
+          <Field label="Link a imagen/video para guardar captura (opcional)">
+            <input name="mediaUrl" className="input" placeholder="URL directa de la imagen o el video" />
+          </Field>
 
           <div className="sm:col-span-2">
             <span className="text-xs text-neutral-400">Estética / estilo (elegí una o varias)</span>
@@ -116,6 +119,17 @@ export default async function ContenidoPage({
               <option>Sin verificar</option>
             </select>
           </Field>
+
+          <div className="sm:col-span-2">
+            <Field label="Guion / transcripción (si ya la tenés)">
+              <textarea name="script" rows={2} className="input" />
+            </Field>
+          </div>
+          <div className="sm:col-span-2">
+            <Field label="Análisis: por qué crees que le fue bien o mal">
+              <textarea name="analysis" rows={2} className="input" />
+            </Field>
+          </div>
 
           <div className="sm:col-span-2">
             <button className="btn-primary" type="submit">

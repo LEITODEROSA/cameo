@@ -6,6 +6,7 @@ const NAV = [
   { href: "/dashboard/marcas", label: "Marcas" },
   { href: "/dashboard/tendencias", label: "Tendencias" },
   { href: "/dashboard/anuncios", label: "Anuncios (Ad Library)" },
+  { href: "/dashboard/integraciones", label: "Integraciones" },
   { href: "/dashboard/mi-marca", label: "Mi marca" },
 ];
 

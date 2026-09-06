@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { readData } from "@/lib/dashboard/store";
-import { deleteContent } from "@/lib/dashboard/actions";
+import { deleteContent, saveContentAnalysis, syncScriptFromSupadata } from "@/lib/dashboard/actions";
 import { engagementScore, formatDate, sumMetric } from "@/lib/dashboard/metrics";
+import { SyncForm } from "../../integraciones/SyncForm";
 
 export default async function BrandDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,12 +29,17 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ id
           {brand.instagramHandle ? ` · IG ${brand.instagramHandle}` : ""}
         </p>
         {brand.notes && <p className="mt-1 text-sm text-neutral-500">{brand.notes}</p>}
-        <Link
-          href={`/dashboard/contenido?brandId=${brand.id}`}
-          className="btn-primary mt-4 inline-block"
-        >
-          + Cargar contenido de esta marca
-        </Link>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link href={`/dashboard/contenido?brandId=${brand.id}`} className="btn-primary">
+            + Cargar contenido de esta marca
+          </Link>
+          <Link
+            href="/dashboard/integraciones"
+            className="rounded-lg border border-white/15 px-4 py-2 text-xs uppercase tracking-wide text-neutral-300 hover:border-white/30 hover:text-white"
+          >
+            Sincronizar vía Apify →
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -79,6 +85,18 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ id
                 </div>
               )}
               {c.caption && <p className="mt-2 text-sm text-neutral-300">{c.caption}</p>}
+
+              {c.mediaPath && (
+                <div className="mt-3 max-w-xs overflow-hidden rounded-lg border border-white/10">
+                  {c.mediaType === "video" ? (
+                    <video src={c.mediaPath} controls className="w-full" />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={c.mediaPath} alt={c.caption ?? "Captura"} className="w-full" />
+                  )}
+                </div>
+              )}
+
               <div className="mt-3 flex flex-wrap gap-4 text-xs text-neutral-400">
                 <span>❤️ {c.metrics.likes ?? 0}</span>
                 <span>💬 {c.metrics.comments ?? 0}</span>
@@ -86,7 +104,41 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ id
                 <span>🔖 {c.metrics.saves ?? 0} guardados</span>
                 <span>▶️ {c.metrics.views ?? 0} views</span>
                 <span className="font-medium text-neutral-200">Score: {engagementScore(c)}</span>
+                <span className="text-neutral-600">fuente: {c.source}</span>
               </div>
+
+              {c.script && (
+                <details className="mt-2 text-xs text-neutral-400">
+                  <summary className="cursor-pointer text-neutral-300">Guion / transcripción</summary>
+                  <p className="mt-1 whitespace-pre-wrap">{c.script}</p>
+                </details>
+              )}
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <form action={saveContentAnalysis} className="flex flex-col gap-1">
+                  <input type="hidden" name="contentId" value={c.id} />
+                  <label className="text-xs text-neutral-500">
+                    Análisis: por qué le fue bien / mal
+                  </label>
+                  <textarea
+                    name="analysis"
+                    defaultValue={c.analysis}
+                    rows={2}
+                    className="input"
+                    placeholder="Ej: hook fuerte en el primer segundo, formato carrusel con precio visible..."
+                  />
+                  <button type="submit" className="w-fit text-xs text-neutral-400 underline hover:text-white">
+                    Guardar análisis
+                  </button>
+                </form>
+
+                {c.url && !c.script && (
+                  <SyncForm action={syncScriptFromSupadata} submitLabel="Traer guion (Supadata)">
+                    <input type="hidden" name="contentId" value={c.id} />
+                  </SyncForm>
+                )}
+              </div>
+
               {c.url && (
                 <a href={c.url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs text-neutral-400 underline">
                   Ver publicación original

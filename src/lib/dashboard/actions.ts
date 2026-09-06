@@ -3,10 +3,17 @@
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { readData, writeData } from "./store";
+import { downloadMedia } from "./media";
+import {
+  fetchSupadataTranscript,
+  fetchWindsorAdsReport,
+  runApifyInstagramScraper,
+} from "./integrations";
 import type {
   AdNetwork,
   AdStatus,
   Brand,
+  ContentEntry,
   ContentFormat,
   Platform,
   Segment,
@@ -79,7 +86,7 @@ export async function createContent(formData: FormData) {
   const aestheticTags = formData.getAll("aestheticTags").map(String);
   const isAd = formData.get("isAd") === "on";
 
-  const entry = {
+  const entry: ContentEntry = {
     id: randomUUID(),
     brandId: String(formData.get("brandId") ?? ""),
     platform: (formData.get("platform") as Platform) || "Instagram",
@@ -98,8 +105,22 @@ export async function createContent(formData: FormData) {
     isAd,
     adNetwork: isAd ? ((formData.get("adNetwork") as AdNetwork) || undefined) : undefined,
     adStatus: isAd ? ((formData.get("adStatus") as AdStatus) || "Sin verificar") : undefined,
+    script: str(formData.get("script")),
+    analysis: str(formData.get("analysis")),
+    source: "Manual",
     createdAt: new Date().toISOString(),
   };
+
+  const mediaUrl = str(formData.get("mediaUrl"));
+  if (mediaUrl) {
+    try {
+      const { mediaPath, mediaType } = await downloadMedia(mediaUrl, entry.brandId, entry.id);
+      entry.mediaPath = mediaPath;
+      entry.mediaType = mediaType;
+    } catch {
+      // Si falla la descarga (link privado, vencido, etc.) seguimos guardando el resto de la pieza.
+    }
+  }
 
   if (!entry.brandId) return;
 
@@ -121,4 +142,161 @@ export async function deleteContent(formData: FormData) {
   revalidatePath("/dashboard/contenido");
   revalidatePath("/dashboard/tendencias");
   revalidatePath("/dashboard/anuncios");
+}
+
+export interface SyncResult {
+  ok: boolean;
+  message: string;
+}
+
+/**
+ * Trae los últimos posteos públicos de una marca vía Apify, descarga la
+ * imagen/video de cada uno a /public/dashboard-media y los guarda como
+ * contenido nuevo (evitando duplicar por url). Requiere APIFY_TOKEN.
+ */
+export async function syncBrandFromApify(formData: FormData): Promise<SyncResult> {
+  const brandId = String(formData.get("brandId") ?? "");
+  const data = await readData();
+  const brand = data.brands.find((b) => b.id === brandId);
+  if (!brand) return { ok: false, message: "Marca no encontrada." };
+  if (!brand.instagramHandle) {
+    return { ok: false, message: "Esta marca no tiene @ de Instagram cargado." };
+  }
+
+  const igUrl = `https://www.instagram.com/${brand.instagramHandle.replace("@", "")}/`;
+
+  try {
+    const items = await runApifyInstagramScraper(igUrl);
+    const existingUrls = new Set(data.content.map((c) => c.url).filter(Boolean));
+    let added = 0;
+
+    for (const item of items) {
+      if (!item.url || existingUrls.has(item.url)) continue;
+
+      const id = randomUUID();
+      const isVideo = item.type === "Video" && Boolean(item.videoUrl);
+      const entry: ContentEntry = {
+        id,
+        brandId,
+        platform: "Instagram",
+        format: isVideo ? "Reel" : "Post",
+        aestheticTags: [],
+        url: item.url,
+        publishedAt: item.timestamp ? item.timestamp.slice(0, 10) : new Date().toISOString().slice(0, 10),
+        caption: item.caption,
+        metrics: {
+          likes: item.likesCount,
+          comments: item.commentsCount,
+          views: item.videoViewCount,
+        },
+        isAd: false,
+        source: "Apify",
+        createdAt: new Date().toISOString(),
+      };
+
+      const mediaUrl = isVideo ? item.videoUrl : item.displayUrl;
+      if (mediaUrl) {
+        try {
+          const { mediaPath, mediaType } = await downloadMedia(mediaUrl, brandId, id);
+          entry.mediaPath = mediaPath;
+          entry.mediaType = mediaType;
+        } catch {
+          // seguimos sin media si la descarga falla
+        }
+      }
+
+      data.content.push(entry);
+      added += 1;
+    }
+
+    await writeData(data);
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/contenido");
+    revalidatePath("/dashboard/tendencias");
+    revalidatePath(`/dashboard/marcas/${brandId}`);
+
+    return { ok: true, message: `Se sincronizaron ${added} piezas nuevas de ${brand.name}.` };
+  } catch (err) {
+    return { ok: false, message: err instanceof Error ? err.message : "Error desconocido." };
+  }
+}
+
+/** Pide a Supadata el guion/transcripción de un video y lo guarda en la pieza. */
+export async function syncScriptFromSupadata(formData: FormData): Promise<SyncResult> {
+  const contentId = String(formData.get("contentId") ?? "");
+  const data = await readData();
+  const entry = data.content.find((c) => c.id === contentId);
+  if (!entry) return { ok: false, message: "Contenido no encontrado." };
+  if (!entry.url) return { ok: false, message: "Esta pieza no tiene link cargado." };
+
+  try {
+    const { text } = await fetchSupadataTranscript(entry.url);
+    entry.script = text;
+    await writeData(data);
+    revalidatePath(`/dashboard/marcas/${entry.brandId}`);
+    revalidatePath("/dashboard/contenido");
+    return { ok: true, message: "Guion actualizado." };
+  } catch (err) {
+    return { ok: false, message: err instanceof Error ? err.message : "Error desconocido." };
+  }
+}
+
+/** Guarda el análisis manual (por qué funcionó / no funcionó) de una pieza. */
+export async function saveContentAnalysis(formData: FormData) {
+  const contentId = String(formData.get("contentId") ?? "");
+  const data = await readData();
+  const entry = data.content.find((c) => c.id === contentId);
+  if (!entry) return;
+  entry.analysis = str(formData.get("analysis"));
+  await writeData(data);
+  revalidatePath(`/dashboard/marcas/${entry.brandId}`);
+}
+
+/**
+ * Trae el reporte de las cuentas de ads propias conectadas en Windsor.ai y
+ * las carga como piezas de "Mi marca" marcadas como anuncio.
+ */
+export async function syncOwnAdsFromWindsor(): Promise<SyncResult> {
+  const data = await readData();
+  const own = data.brands.find((b) => b.isOwn);
+  if (!own) return { ok: false, message: "No hay marca propia configurada." };
+
+  try {
+    const rows = await fetchWindsorAdsReport();
+    let added = 0;
+
+    for (const row of rows) {
+      const id = randomUUID();
+      const entry: ContentEntry = {
+        id,
+        brandId: own.id,
+        platform: row.source?.toLowerCase().includes("google") ? "Facebook" : "Instagram",
+        format: "Anuncio",
+        aestheticTags: [],
+        publishedAt: row.date ?? new Date().toISOString().slice(0, 10),
+        caption: row.campaign,
+        metrics: {
+          spend: row.spend,
+          clicks: row.clicks,
+          impressions: row.impressions,
+        },
+        isAd: true,
+        adNetwork: row.source?.toLowerCase().includes("google") ? "Google" : "Meta (Facebook/Instagram)",
+        adStatus: "Activo",
+        source: "Windsor.ai",
+        createdAt: new Date().toISOString(),
+      };
+      data.content.push(entry);
+      added += 1;
+    }
+
+    await writeData(data);
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/mi-marca");
+    revalidatePath("/dashboard/anuncios");
+
+    return { ok: true, message: `Se importaron ${added} filas de rendimiento de pauta propia.` };
+  } catch (err) {
+    return { ok: false, message: err instanceof Error ? err.message : "Error desconocido." };
+  }
 }
