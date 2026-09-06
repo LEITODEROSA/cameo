@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env*.example
+
+# dashboard: capturas/videos descargados en runtime, no son código fuente
+/public/dashboard-media/
 
 # vercel
 .vercel
