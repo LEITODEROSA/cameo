@@ -31,6 +31,21 @@ export function formatBreakdown(entries: ContentEntry[]) {
   return [...counts.entries()].sort((a, b) => b[1] - a[1]);
 }
 
+/** Agrupa por objetivo de canal (playbook de estrategia) y promedia el engagement de cada uno. */
+export function channelGoalBreakdown(entries: ContentEntry[]) {
+  const counts = new Map<string, { count: number; engagement: number }>();
+  for (const e of entries) {
+    if (!e.channelGoal) continue;
+    const current = counts.get(e.channelGoal) ?? { count: 0, engagement: 0 };
+    current.count += 1;
+    current.engagement += engagementScore(e);
+    counts.set(e.channelGoal, current);
+  }
+  return [...counts.entries()]
+    .map(([goal, v]) => ({ goal, ...v, avgEngagement: Math.round(v.engagement / v.count) }))
+    .sort((a, b) => b.avgEngagement - a.avgEngagement);
+}
+
 export function formatDate(iso: string) {
   try {
     return new Date(iso).toLocaleDateString("es-AR", { day: "2-digit", month: "short", year: "numeric" });

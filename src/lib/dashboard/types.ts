@@ -56,6 +56,8 @@ export interface ContentEntry {
   script?: string;
   /** Por qué funcionó o no funcionó esta pieza, para aprender de la competencia */
   analysis?: string;
+  /** A qué objetivo de canal responde, según el playbook de estrategia de Cameo */
+  channelGoal?: ChannelGoal;
   source: ContentSource;
   createdAt: string;
 }
@@ -64,6 +66,20 @@ export interface DashboardData {
   brands: Brand[];
   content: ContentEntry[];
 }
+
+/** Objetivos de canal según el playbook de estrategia de contenido de Cameo (ESTRATEGIA_MKT.pdf) */
+export const CHANNEL_GOALS = [
+  "Lanzamiento de campaña",
+  "Comunidad / influencer",
+  "BTS (detrás de escena)",
+  "Producto en modelo (en uso)",
+  "Producto detalle",
+  "Restock / nuevos ingresos",
+  "Acción comercial",
+  "Fidelización",
+] as const;
+
+export type ChannelGoal = (typeof CHANNEL_GOALS)[number];
 
 export const AESTHETIC_TAGS = [
   "Long book / carta",

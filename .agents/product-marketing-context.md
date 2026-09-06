@@ -14,6 +14,12 @@
 **Modelo de negocio:** Venta de producto físico. Dos líneas de ingreso: venta minorista (margen pleno) y venta mayorista (volumen, margen menor). El copy actual del sitio se apoya en un posicionamiento editorial/minimalista ("Menos ruido, más forma", materiales naturales, prendas pensadas para durar y no para una temporada), que convive con el objetivo de subir el nivel de producción audiovisual a "premium".
 
 ## Target Audience
+
+**Buyer persona (verbatim de ESTRATEGIA_MKT.pdf, la estrategia de contenido que ya definió el equipo):**
+> Mujer joven egresada de colegio privado no bilingüe, con un círculo social de amistades de personas de clase media y media baja. Padres laburantes, padre abogado y mamá profesora de secundaria. Terminó el colegio y decidió estudiar en la UADE marketing, tiene intereses por la moda y las redes. Conoce todas las marcas pero no es de consumir estas por sus precios elevados. Durante la carrera hizo pasantías para tener un ingreso propio y ganar experiencia. Luego de terminar la carrera logra ingresar a una agencia de publicidad con un sueldo arriba de la media, pero la mayoría de sus ingresos los ahorra o los usa para viajar.
+
+Punto clave de esta persona: **conoce y admira las marcas caras (Aritzia, Nude Project, SKIMS, Eme Studios) pero no las compra por precio** — ahí está el hueco que Cameo puede ocupar: la estética que ella ya sigue y desea, a un precio que sí puede pagar.
+
 **Consumidora objetivo (minorista):** Mujer que sigue marcas de indumentaria en Instagram, sensible a la estética del contenido (fotos, videos, historias) tanto como a la prenda en sí. Busca piezas que se sientan atemporales/de calidad, no fast-fashion descartable.
 
 **Cliente objetivo (mayorista):** Locales de indumentaria y revendedores que buscan una marca con identidad visual fuerte y contenido que les sirva de apoyo para revender (fotos/lookbooks reutilizables, reconocimiento de marca).
@@ -72,7 +78,10 @@
 *(pendiente — completar con comentarios/DMs reales de clientas y compradoras mayoristas de Cameo)*
 
 ## Brand Voice
-**Tono:** editorial, minimalista, seguro — heredado del copy actual del sitio ("Menos ruido, más forma").
+**Tono:** "una persona amigable que te hace sentir parte aunque no la conozcas" (definición textual de la estrategia). Editorial, minimalista, seguro — heredado del copy actual del sitio ("Menos ruido, más forma").
+**Identidad:** "básico pero creativo" — no exceso de producción, pero con una idea/concepto detrás de cada pieza.
+**Estética:** minimalista, pero minimalista **no es sinónimo de monótono**. Regla de la estrategia: *"CAMEO no dice mucho pero muestra mucho"* — el copy es corto, la imagen hace el trabajo.
+**Hoy transmite:** juventud, creatividad y diversión. **El objetivo es mantener eso, pero con una propuesta más curada y estratégica** (ese es el gap concreto a cerrar con este dashboard).
 **Estilo:** frases cortas, foco en material/silueta/durabilidad antes que en descuentos o urgencia.
 **Personalidad (adjetivos):** atemporal, cuidada, directa, local, aspiracional-pero-accesible.
 
@@ -80,6 +89,32 @@
 *(pendiente — sumar métricas propias: seguidores, ventas mayoristas activas, testimonios de clientas/locales revendedores)*
 
 ## Goals
-**Objetivo de negocio principal:** subir el nivel de producción de contenido (foto, video, historias) a un estándar "premium", benchmarkeando sistemáticamente contra Top White, Sisters and Seekers, Two Hip, My Saint, Freres, 47 Street, Kosiuko, Nude Project, M Studios, Aritzia y Zara — para crecer ventas minoristas y atraer/retener cuentas mayoristas.
+**Objetivo de negocio principal:** subir el nivel de producción de contenido (foto, video, historias) a un estándar "premium", benchmarkeando sistemáticamente contra Top White, Sisters and Seekers, Two Hip, My Saint, Freres, 47 Street, Kosiuko, Nude Project, Eme Studios, Aritzia, SKIMS, Zara, King of the Kongo y Scuffers — para crecer ventas minoristas y atraer/retener cuentas mayoristas.
 **Acción de conversión clave:** seguimiento en Instagram → consulta por DM/WhatsApp → compra minorista o alta de cuenta mayorista.
 **Métricas actuales:** *(pendiente — completar con datos reales de Instagram Insights / Meta Ads Manager)*
+
+## Playbook de contenido (de ESTRATEGIA_MKT.pdf)
+
+Esta es la estrategia que el propio equipo de Cameo ya definió. El dashboard de competencia existe para alimentarla con evidencia real (qué funciona en el mercado), no para reemplazarla.
+
+**Los 3 pilares actuales de Cameo:** Pauta, Calidad, Precio. **La estrategia busca sumar un 4º pilar: la marca misma** (que el storytelling/contenido sea, en sí mismo, una razón para elegir Cameo — no solo el producto).
+
+**Por qué importa esto ahora:** "la competencia es abismal, no solo compite con marcas locales, se volvió internacional. Las redes están saturadas, la retención se volvió casi nula: el objetivo es dejar una huella en el público. La pauta es una forma de permanecer en la mente del consumidor, el contenido en redes una forma de activar el recuerdo."
+
+**Regla de campañas:** no depender de "drop"/lanzamiento de producto como excusa para comunicar. Desarrollar campañas con una idea/concepto independiente del producto, pero con una estructura o formato coherente. Flujo: **Desarrollo de campaña → Elección de productos → Lanzamiento**.
+- *Elección de productos:* no hace falta mostrar todo el catálogo en la "vidriera" — curar, mostrar solo lo necesario, generar tráfico a la web.
+- *Lanzamiento:* dejar de "postear por postear" — afilar el timing, aparecer solo cuando hay algo que decir.
+- Ejemplo bueno citado en la estrategia: Eme Studios / campaña "WHITE ECHO" (concepto propio + fecha de lanzamiento + presentación de colección + reel + posteo de campaña, todo coherente entre sí).
+- Ejemplo de alerta citado en la estrategia: Scuffers, campaña FW26 con "concepto no claro" — sirve de estética/historias de referencia, pero no de ejemplo de concepto.
+
+**Objetivo por canal (no todos los canales comunican lo mismo):**
+- **Historias de Instagram:** orientadas a la venta pero *no* mandando tráfico directo a la web — el objetivo es mostrar el producto en distintos formatos para fidelizar. Sirven para anuncios de restock/nuevos ingresos y anuncios de acciones comerciales.
+- **Posteos (feed):** lanzamientos de campaña con comunicación coherente, posteos de comunidad con influencers/microinfluencers para posicionamiento de marca, fotoproducto adaptado a cada campaña, comunicación de acciones comerciales.
+- **Reels:** refuerzo de campañas (deben acompañar la comunicación del concepto, no ir sueltos), BTS de campañas, video de producto en modelo (mostrar la prenda en uso), video producto para mostrar detalle.
+- **TikTok:** contenido BTS.
+
+**Banco de creadores:** la selección de microinfluencers/creadores que usen las prendas debe ser cautelosa — los perfiles siempre alineados a la estética e identidad de la marca, no elegidos solo por alcance.
+
+**Calendarización:** definir una cantidad de campañas por semestre (bajo el modelo campaña → elección de productos → ejecución) en vez de planificar posteo por posteo.
+
+**Cómo usar el dashboard de competencia con este playbook:** al cargar contenido de un competidor, clasificarlo también por a qué objetivo de canal responde (¿es un posteo de lanzamiento de campaña? ¿un reel de BTS? ¿una historia de restock?) — así la sección de Tendencias no solo dice "qué estética funciona", sino "qué está funcionando para el mismo objetivo que persigue cada canal de Cameo".

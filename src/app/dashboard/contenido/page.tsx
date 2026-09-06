@@ -1,6 +1,6 @@
 import { createContent, deleteContent } from "@/lib/dashboard/actions";
 import { readData } from "@/lib/dashboard/store";
-import { AESTHETIC_TAGS } from "@/lib/dashboard/types";
+import { AESTHETIC_TAGS, CHANNEL_GOALS } from "@/lib/dashboard/types";
 import { engagementScore, formatDate } from "@/lib/dashboard/metrics";
 
 export default async function ContenidoPage({
@@ -57,6 +57,16 @@ export default async function ContenidoPage({
               <option>Historia</option>
               <option>Video</option>
               <option>Anuncio</option>
+            </select>
+          </Field>
+          <Field label="Objetivo de canal (según la estrategia)">
+            <select name="channelGoal" className="input" defaultValue="">
+              <option value="">Sin clasificar</option>
+              {CHANNEL_GOALS.map((goal) => (
+                <option key={goal} value={goal}>
+                  {goal}
+                </option>
+              ))}
             </select>
           </Field>
           <Field label="Fecha de publicación">

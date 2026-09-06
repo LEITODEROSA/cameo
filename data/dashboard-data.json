@@ -7,7 +7,7 @@
       "country": "Argentina",
       "instagramHandle": "@cameo",
       "isOwn": true,
-      "notes": "Indumentaria femenina, Flores (CABA). Venta minorista y mayorista. Objetivo: subir el nivel de producción de contenido a premium. Completá/corregí el @ real de Instagram acá.",
+      "notes": "Indumentaria femenina, Flores (CABA). Venta minorista y mayorista. Hoy transmite juventud/creatividad/diversión; el objetivo es mantenerlo con una propuesta más curada y estratégica (ver .agents/product-marketing-context.md).",
       "createdAt": "2026-09-06T00:00:00.000Z"
     },
     {
@@ -15,15 +15,17 @@
       "name": "Nude Project",
       "segment": "Unisex",
       "country": "España",
-      "notes": "Referente de estética/dirección de arte a nivel internacional. Confirmá el @ exacto.",
+      "instagramHandle": "@nudeproject",
+      "notes": "Referente de estética/dirección de arte a nivel internacional.",
       "createdAt": "2026-09-06T00:00:00.000Z"
     },
     {
       "id": "m-studios",
-      "name": "M Studios",
+      "name": "Eme Studios",
       "segment": "Mujer",
       "country": "Argentina",
-      "notes": "Referente de estética premium local. Confirmá el @ exacto (puede ser \"Eme Studios\").",
+      "instagramHandle": "@emestudios_",
+      "notes": "Referente de estética premium local. Citada en la estrategia como ejemplo de campaña bien ejecutada (WHITE ECHO).",
       "createdAt": "2026-09-06T00:00:00.000Z"
     },
     {
@@ -56,7 +58,8 @@
       "name": "Two Hip",
       "segment": "Mujer",
       "country": "Argentina",
-      "notes": "Competidor directo AR. Confirmá el @ y la escritura exacta del nombre.",
+      "instagramHandle": "@twohip_",
+      "notes": "Competidor directo AR.",
       "createdAt": "2026-09-06T00:00:00.000Z"
     },
     {
@@ -64,7 +67,8 @@
       "name": "My Saint",
       "segment": "Mujer",
       "country": "Argentina",
-      "notes": "Competidor directo AR. Confirmá el @ y la escritura exacta del nombre.",
+      "instagramHandle": "@mysaintclo",
+      "notes": "Competidor directo AR.",
       "createdAt": "2026-09-06T00:00:00.000Z"
     },
     {
@@ -72,7 +76,8 @@
       "name": "Freres",
       "segment": "Unisex",
       "country": "Argentina",
-      "notes": "Competidor directo AR. Confirmá el @ y la escritura exacta del nombre.",
+      "instagramHandle": "@freres",
+      "notes": "Competidor directo AR.",
       "createdAt": "2026-09-06T00:00:00.000Z"
     },
     {
@@ -98,6 +103,33 @@
       "country": "España",
       "instagramHandle": "@zara",
       "notes": "Referente internacional de escala/producción, no compite en precio directo.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "skims",
+      "name": "SKIMS",
+      "segment": "Mujer",
+      "country": "Estados Unidos",
+      "instagramHandle": "@skims",
+      "notes": "Referente internacional (Kardashian) de fotoproducto y ropa interior/loungewear premium.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "king-of-the-kongo",
+      "name": "King of the Kongo",
+      "segment": "Unisex",
+      "country": "Argentina",
+      "instagramHandle": "@kingofthekongo",
+      "notes": "Competidor/referente AR.",
+      "createdAt": "2026-09-06T00:00:00.000Z"
+    },
+    {
+      "id": "scuffers",
+      "name": "Scuffers",
+      "segment": "Hombre",
+      "country": "España",
+      "instagramHandle": "@scuffers.her",
+      "notes": "Citada en la estrategia como ejemplo de historias/estética a mirar, pero con concepto de campaña poco claro (oportunidad: Cameo puede hacerlo mejor ahí).",
       "createdAt": "2026-09-06T00:00:00.000Z"
     }
   ],

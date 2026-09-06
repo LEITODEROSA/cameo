@@ -15,6 +15,7 @@ import type {
   AdNetwork,
   AdStatus,
   Brand,
+  ChannelGoal,
   ContentEntry,
   ContentFormat,
   Platform,
@@ -109,6 +110,7 @@ export async function createContent(formData: FormData) {
     adStatus: isAd ? ((formData.get("adStatus") as AdStatus) || "Sin verificar") : undefined,
     script: str(formData.get("script")),
     analysis: str(formData.get("analysis")),
+    channelGoal: (str(formData.get("channelGoal")) as ChannelGoal | undefined) || undefined,
     source: "Manual",
     createdAt: new Date().toISOString(),
   };
